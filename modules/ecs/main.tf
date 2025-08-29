@@ -22,8 +22,8 @@ resource "aws_ecs_task_definition" "app" {
   depends_on               = [aws_db_instance.production]
   network_mode             = "awsvpc" # Required for Fargate
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "${var.fargate_cpu}"
-  memory                   = "${var.fargate_memory}"
+  cpu                      = var.fargate_cpu
+  memory                   = var.fargate_memory
   execution_role_arn       = aws_iam_role.ecs-task-execution-role.arn
   task_role_arn            = aws_iam_role.ecs-task-execution-role.arn
   container_definitions    = data.template_file.app.rendered
@@ -62,37 +62,37 @@ resource "aws_ecs_service" "production" {
 }
 
 resource "aws_ecs_task_definition" "django_migration" {
-  family                = "django-migration-task"
-  network_mode          = "awsvpc"
+  family                   = "django-migration-task"
+  network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                   = var.fargate_cpu
-  memory                = var.fargate_memory
-  execution_role_arn    = aws_iam_role.ecs-task-execution-role.arn
+  cpu                      = var.fargate_cpu
+  memory                   = var.fargate_memory
+  execution_role_arn       = aws_iam_role.ecs-task-execution-role.arn
 
   container_definitions = jsonencode([
     {
       name  = "django-migration-container"
       image = var.docker_image_url_django
-      environment: [
+      environment : [
         {
-            "name": "RDS_DB_NAME",
-            "value": var.rds_db_name
+          "name" : "RDS_DB_NAME",
+          "value" : var.rds_db_name
         },
         {
-            "name": "RDS_USERNAME",
-            "value": var.rds_username
+          "name" : "RDS_USERNAME",
+          "value" : var.rds_username
         },
         {
-            "name": "RDS_PASSWORD",
-            "value": var.rds_password
+          "name" : "RDS_PASSWORD",
+          "value" : var.rds_password
         },
         {
-            "name": "RDS_HOSTNAME",
-            "value": aws_db_instance.production.address
+          "name" : "RDS_HOSTNAME",
+          "value" : aws_db_instance.production.address
         },
         {
-            "name": "RDS_PORT",
-            "value": "5432"
+          "name" : "RDS_PORT",
+          "value" : "5432"
         }
       ],
       # Run migrations as the command
@@ -148,13 +148,13 @@ resource "aws_efs_mount_target" "efs_mount" {
 }
 
 resource "aws_ecs_task_definition" "django_collectstatic" {
-  family                = "django-collectstatic-task"
-  network_mode          = "awsvpc"
+  family                   = "django-collectstatic-task"
+  network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                   = var.fargate_cpu
-  memory                = var.fargate_memory
-  execution_role_arn    = aws_iam_role.ecs-task-execution-role.arn
-  task_role_arn         = aws_iam_role.ecs-task-execution-role.arn
+  cpu                      = var.fargate_cpu
+  memory                   = var.fargate_memory
+  execution_role_arn       = aws_iam_role.ecs-task-execution-role.arn
+  task_role_arn            = aws_iam_role.ecs-task-execution-role.arn
   volume {
     name = "efs-volume"
     efs_volume_configuration {
@@ -180,9 +180,9 @@ resource "aws_ecs_task_definition" "django_collectstatic" {
 
       mountPoints = [
         {
-          sourceVolume = "efs-volume",
+          sourceVolume  = "efs-volume",
           containerPath = "/efs/staticfiles/",
-          readOnly = false
+          readOnly      = false
         }
       ]
 

@@ -76,7 +76,7 @@ resource "aws_security_group" "efs_sg" {
   vpc_id      = aws_vpc.production-vpc.id
 
   ingress {
-    from_port   = 2049  # NFS port
+    from_port   = 2049 # NFS port
     to_port     = 2049
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"] # Modify this based on your security requirements

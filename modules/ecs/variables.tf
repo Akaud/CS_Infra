@@ -46,5 +46,5 @@ variable "rds_password" {
 
 variable "region" {
   description = "region for resource"
-  type = string
+  type        = string
 }
